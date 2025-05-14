@@ -1,0 +1,12 @@
+[build]
+  publish = "public"
+  functions = "functions"
+
+[http]
+  # Enable CORS for all API routes
+  [[headers]]
+    for = "/.netlify/functions/*"
+    [headers.values]
+      Access-Control-Allow-Origin = "*"
+      Access-Control-Allow-Methods = "POST, OPTIONS"
+      Access-Control-Allow-Headers = "Content-Type"

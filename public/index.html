@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>lightyagami is a goat</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #2C2F33 0%, #23272A 100%);
+      overflow-x: hidden;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 450px;
+      width: 90%;
+      animation: fadeInScale 0.5s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h2 {
+      color: #FFFFFF;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 8px rgba(88, 101, 242, 0.5);
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    button {
+      position: relative;
+      padding: 12px 24px;
+      background: linear-gradient(90deg, #5865F2, #7289DA);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin: 10px 0;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(88, 101, 242, 0.5);
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+      );
+      transition: left 0.4s ease;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    .loading {
+      pointer-events: none;
+      opacity: 0.7;
+      position: relative;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #FFFFFF;
+      border-top: 3px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    #tokenDisplay {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      word-wrap: break-word;
+      position: relative;
+    }
+
+    #token {
+      font-family: 'Consolas', monospace;
+      font-size: 0.9rem;
+      padding: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      margin: 0.5rem 0;
+    }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+    }
+
+    .copy-btn:active {
+      transform: scale(0.95);
+    }
+
+    .tooltip {
+      position: absolute;
+      background: #5865F2;
+      color: #FFFFFF;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      top: -40px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: translateY(10px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .tooltip.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .error {
+      color: #ED4245;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        width: 95%;
+        padding: 1.5rem;
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+      input, button {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Login to Display your Token</h2>
+    <div id="loginForm">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button id="loginBtn" onclick="login()">Login</button>
+      <p id="error" class="error hidden"></p>
+    </div>
+    <div id="tokenDisplay" class="hidden">
+      <p>Your Discord Token:</p>
+      <p id="token"></p>
+      <button class="copy-btn" onclick="copyToken()">
+        Copy
+        <span class="tooltip" id="tooltip">Copied!</span>
+      </button>
+    </div>
+  </div>
+  <script>
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const error = document.getElementById('error');
+      const loginForm = document.getElementById('loginForm');
+      const tokenDisplay = document.getElementById('tokenDisplay');
+      const tokenElement = document.getElementById('token');
+      const loginBtn = document.getElementById('loginBtn');
+
+      if (!email || !password) {
+        error.textContent = 'Please enter both email and password.';
+        error.classList.remove('hidden');
+        return;
+      }
+
+      loginBtn.classList.add('loading');
+      loginBtn.textContent = '';
+
+      try {
+        const response = await fetch('/.netlify/functions/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        loginBtn.classList.remove('loading');
+        loginBtn.textContent = 'Login';
+
+        if (response.ok && data.token) {
+          error.classList.add('hidden');
+          loginForm.classList.add('hidden');
+          tokenElement.textContent = data.token;
+          tokenDisplay.classList.remove('hidden');
+        } else {
+          error.textContent = data.message || 'Invalid email or password.';
+          error.classList.remove('hidden');
+        }
+      } catch (err) {
+        loginBtn.classList.remove('loading');
+        loginBtn.textContent = 'Login';
+        error.textContent = 'An error occurred. Please try again.';
+        error.classList.remove('hidden');
+        console.error(err);
+      }
+    }
+
+    function copyToken() {
+      const token = document.getElementById('token').textContent;
+      const tooltip = document.getElementById('tooltip');
+      navigator.clipboard.writeText(token).then(() => {
+        tooltip.classList.add('show');
+        setTimeout(() => tooltip.classList.remove('show'), 2000);
+      }).catch(err => {
+        alert('Failed to copy token.');
+        console.error(err);
+      });
+    }
+  </script>
+</body>
+</html>
