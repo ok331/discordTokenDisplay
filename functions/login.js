@@ -48,24 +48,25 @@ exports.handler = async (event, context) => {
       })
     ).toString('base64');
 
-    // Make request to Discord API
-    const response = await axios.post('https://discord.com/api/v9/auth/login', {
+    // Simplified payload to avoid null values
+    const payload = {
       login: email,
       password: password,
       undelete: false,
-      gift_code_sku_id: null,
-      login_source: null,
-      captcha_key: null,
-      source: 'login', // Added to match Discord's expected payload
-    }, {
+    };
+
+    // Make request to Discord API
+    const response = await axios.post('https://discord.com/api/v9/auth/login', payload, {
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
         'X-Super-Properties': superProperties,
         'Accept': '*/*',
-        'Accept-Language': 'en-US',
+        'Accept-Language': 'en-US,en;q=0.9',
         'Origin': 'https://discord.com',
         'Referer': 'https://discord.com/login',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-site',
       },
     });
 
@@ -83,6 +84,7 @@ exports.handler = async (event, context) => {
       message: error.response?.data?.message || error.message,
       status: error.response?.status,
       data: error.response?.data,
+      headers: error.response?.headers,
     };
     console.error('Login error:', JSON.stringify(errorDetails, null, 2));
     return {
@@ -92,7 +94,7 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({
-        message: error.response?.data?.message || 'An error occurred',
+        message: error.response?.data?.message || 'An error occurred during login',
       }),
     };
   }
