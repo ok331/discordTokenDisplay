@@ -3,7 +3,6 @@
   functions = "functions"
 
 [http]
-  # Enable CORS for all API routes
   [[headers]]
     for = "/.netlify/functions/*"
     [headers.values]
